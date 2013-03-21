@@ -3,6 +3,8 @@ define(
 
         var Action = require('er/Action');
         var util = require('er/util');
+        require('book/List');
+        var listAction = 'book/List';
 
         function Index() {
             Action.apply(this, arguments);
@@ -25,27 +27,27 @@ define(
             me.view.on('search', util.bindFn(search, this));
         };
 
-        Index.prototype.loadSubAction = function(actionName, action, container, opts) {
+        Index.prototype.loadSubAction = function(action, container, opts) {
             var me = this;
-            var subAction = action;
+            var subAction = window.require(action);
             subAction = new subAction();
             if (opts) subAction = util.mix(subAction, opts);
             subAction.enter({supAction: me, container: container});
             if (!me.subAction) me.subAction = {};
-            me.subAction[actionName] = subAction;
+            me.subAction[action] = subAction;
         };
 
         Index.prototype.onentercomplete = function() {
             var me = this;
-            me.loadSubAction('book/List', require('book/List'), 'list-wrap', {
+            me.loadSubAction(listAction, 'list-wrap', {
                 onenter : function(){
-                    //console.log('subAction enter!');
+                    console.log('subAction enter!');
                 },
                 onentercomplete : function(){
                     console.log('subAction enter complete!');
                 }
             });
-            me.subAction['book/List'].on('buy', util.bindFn(buyBook, me));
+            me.subAction[listAction].on('buy', util.bindFn(buyBook, me));
         };
 
         util.inherits(Index, Action);
