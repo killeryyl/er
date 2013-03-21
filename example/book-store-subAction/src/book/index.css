@@ -1,0 +1,13 @@
+#page {
+    overflow: hidden;
+}
+
+#book-list-filter {
+    overflow: hidden;
+    line-height: 30px;
+    margin-bottom: 20px;
+}
+#book-list-filter > div {
+    float: left;
+    margin-right: 40px;
+}
