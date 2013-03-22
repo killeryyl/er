@@ -1,14 +1,17 @@
 <!-- target: bookList -->
-<!-- if: ${author} || ${publisher} || ${keywords} -->
-    <a id="all-list" data-filter="ALL" href="javascript:;">所有</a> -> 
-    <!-- if: ${author} -->
-    作者: ${author}
-    <!-- elif: ${publisher} -->
-    出版社: ${publisher}
-    <!-- elif: ${keywords} -->
-    关键字: ${keywords}
-    <!-- /if -->
-<!-- /if -->
+<div id="book-list-filter">
+    <div id="book-list-order">
+        <span class="filter-title">排序</span>
+        <a href="#/book/list~keywords=${keywords|url}&amp;author=${author|url}&amp;publisher=${publisher|url}">默认</a>
+        <a href="#/book/list~keywords=${keywords|url}&amp;author=${author|url}&amp;publisher=${publisher|url}&amp;order=price">价格</a>
+        <a href="#/book/list~keywords=${keywords|url}&amp;author=${author|url}&amp;publisher=${publisher|url}&amp;order=author">作者</a>
+        <a href="#/book/list~keywords=${keywords|url}&amp;author=${author|url}&amp;publisher=${publisher|url}&amp;order=publisher">出版社</a>
+    </div>
+    <div id="book-list-search">
+        <input id="keywords" value="${keywords|html}" />
+        <span id="submit-search" class="interactive">搜索</span>
+    </div>
+</div>
 <ol id="book-list">
     <!-- for: ${list} as ${book} -->
     <li class="book-info" data-isbn="${book.isbn}">
@@ -19,11 +22,11 @@
         <ul class="summary">
             <li class="author">
                 <span class="key">作　　者</span>
-                <a data-filter="author" class="value" href="javascript:;">${book.author}</a>
+                <a href="#/book/list~author=${book.author|url}" class="value">${book.author}</a>
             </li>
             <li class="publisher">
                 <span class="key">出 版 社</span>
-                <a data-filter="publisher" class="value" href="javascript:;">${book.publisher}</a>
+                <a href="#/book/list~publisher=${book.publisher|url}" class="value">${book.publisher}</a>
             </li>
             <li class="publish-date">
                 <span class="key">出版时间</span>
@@ -46,4 +49,8 @@
     <a data-page="${p}" class="index <!-- if: ${p} == ${page} -->disable current<!-- /if -->">${p}</a>
     <!-- /for -->
     <a data-page="${page}+1" class="next <!-- if: ${page} == ${pageCount} -->disable<!-- /if -->">下一页</a>
+</div>
+<div id="book-info">
+    <span id="close-book-info">关闭</span>
+    <div id="book-info-panel"></div>
 </div>
