@@ -12,49 +12,34 @@ define(
 
         function buyBook(e) {
             var book = this.model.find(e.isbn);
-            this.fire('buy', {isbn: e.isbn, book: book});
+            var cart = require('cart/init');
+            cart.add(book);
+            this.view.showBoughtTip(e.isbn);
         }
 
         function search(e) {
-            var me = this;
-            var query = {
-                page: 1,
-                keywords: '',
-                author: '',
-                publisher: '',
-                order: ''
-            };
-            var key = [];
-            if (e.keywords) {
-                key = ['keywords'];
-            }
-            else if (e.author) {
-                key = ['keywords', 'author', 'order'];
-            }
-            else if (e.publisher) {
-                key = ['keywords', 'publisher', 'order'];
-            }
-            else if (e.page || e.order) {
-                key = ['page', 'keywords', 'author', 'publisher', 'order'];
-            }
-            var i = key.length;
-            while (i--) {
-                var tmpKey = key[i];
-                query[tmpKey] = e[tmpKey] || me.model.get(tmpKey);
-            }
-            me.model.set(query);
-            me.enter(me.model.valueOf());
+            var query = { keywords: e.keywords };
+            var URL = require('er/URL');
+            this.redirect(URL.withQuery('/book/list', query));
+        }
+
+        function flip(e) {
+            var query = { page: e.page };
+            var URL = require('er/URL');
+            var cURL = this.model.get('url');
+            this.redirect(
+                URL.withQuery(
+                    cURL.getPath(),
+                    require('er/util').mix(cURL.getQuery(), query)
+                )
+            );
         }
 
         BookList.prototype.initBehavior = function() {
             var util = require('er/util');
-            if (!this.rendered){
-                this.on('search', util.bindFn(search, this));
-                this.rendered = true;
-            }
-            this.view.on('buy', util.bindFn(buyBook, this));
-            this.view.on('search', util.bindFn(search, this));
-            this.view.on('flip', util.bindFn(search, this));
+            this.view.on('buy', util.bind(buyBook, this));
+            this.view.on('search', util.bind(search, this));
+            this.view.on('flip', util.bind(flip, this));
         };
 
         require('er/util').inherits(BookList, Action);
