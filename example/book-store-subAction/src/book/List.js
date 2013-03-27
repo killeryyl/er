@@ -16,45 +16,18 @@ define(
         }
 
         function search(e) {
-            var me = this;
-            var query = {
-                page: 1,
-                keywords: '',
-                author: '',
-                publisher: '',
-                order: ''
-            };
-            var key = [];
-            if (e.keywords) {
-                key = ['keywords'];
-            }
-            else if (e.author) {
-                key = ['keywords', 'author', 'order'];
-            }
-            else if (e.publisher) {
-                key = ['keywords', 'publisher', 'order'];
-            }
-            else if (e.page || e.order) {
-                key = ['page', 'keywords', 'author', 'publisher', 'order'];
-            }
-            var i = key.length;
-            while (i--) {
-                var tmpKey = key[i];
-                query[tmpKey] = e[tmpKey] || me.model.get(tmpKey);
-            }
-            me.model.set(query);
-            me.enter(me.model.valueOf());
+            var URL = require('er/url');
+            console.log(this.redirect);
+            this.redirect(URL.withQuery('/book/list',e).toString(), {force:true});
+            /*var controller = require('er/controller');
+            controller.renderChildAction('/book/list', this.view.container, e);*/
         }
-
+        
         BookList.prototype.initBehavior = function() {
             var util = require('er/util');
-            if (!this.rendered){
-                this.on('search', util.bindFn(search, this));
-                this.rendered = true;
-            }
-            this.view.on('buy', util.bindFn(buyBook, this));
-            this.view.on('search', util.bindFn(search, this));
-            this.view.on('flip', util.bindFn(search, this));
+            console.log('initBehavior');
+            this.view.on('buy', util.bind(buyBook, this));
+            this.view.on('search', util.bind(search, this));
         };
 
         require('er/util').inherits(BookList, Action);

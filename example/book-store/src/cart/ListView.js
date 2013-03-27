@@ -10,6 +10,7 @@ define(
 
         function plusBook(e) {
             var isbn = $(e.target).closest('tr').attr('data-isbn');
+            console.log(isbn);
             this.fire('plus', { isbn: isbn });
         }
 

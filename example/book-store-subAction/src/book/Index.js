@@ -16,36 +16,17 @@ define(
             this.view.showBoughtTip(e.isbn);
         }
 
-        function search(e) {
-            this.subAction['book/List'].fire('search', e);
-        }
-
-        Index.prototype.initBehavior = function() {
-            var me = this;
-            me.view.on('search', util.bindFn(search, this));
-        };
-
-        Index.prototype.loadSubAction = function(actionName, action, container, opts) {
-            var me = this;
-            var subAction = action;
-            subAction = new subAction();
-            if (opts) subAction = util.mix(subAction, opts);
-            subAction.enter({supAction: me, container: container});
-            if (!me.subAction) me.subAction = {};
-            me.subAction[actionName] = subAction;
-        };
-
         Index.prototype.onentercomplete = function() {
             var me = this;
-            me.loadSubAction('book/List', require('book/List'), 'list-wrap', {
-                onenter : function(){
-                    //console.log('subAction enter!');
-                },
-                onentercomplete : function(){
-                    console.log('subAction enter complete!');
-                }
-            });
-            me.subAction['book/List'].on('buy', util.bindFn(buyBook, me));
+            var controller = require('er/controller');
+            controller
+                .renderChildAction('/book/list', 'list-wrap')
+                .done(function(action, args) {
+                    action.onentercomplete = function(){
+                        console.log('/book/list onentercomplete');
+                    };
+                    action.on('buy', util.bind(buyBook, me));
+                });
         };
 
         util.inherits(Index, Action);

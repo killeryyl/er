@@ -20,7 +20,6 @@ define(
         function plusBook(e) {
             cart.plus(e.isbn);
             this.model.total = cart.calculateSum();
-
             this.view.render();
         }
 
